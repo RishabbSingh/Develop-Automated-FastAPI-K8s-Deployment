@@ -314,38 +314,20 @@ kubernetes               ClusterIP      10.100.0.1       <none>                 
 
 #### 6. **Test the FastAPI Endpoints**
 
-1\. **Create Deployment Endpoint**
+1\. **POST - It will Create Deployment by the requested name**  
 
-   ```bash
+```bash
 
-   curl -X POST "http://<external-ip>/createDeployment/test-deployment"
+curl -X 'POST' \
+'http://a13fd2538294a414ba2a22974aa6466e-1509821416.ap-south-1.elb.amazonaws.com/createDeployment/<give-deployment-name-here>'
 
-   ```
+```
 
-2\. **Get Prometheus Details Endpoint**
+2\. **GET - It will display oall deployments which we have created**
 
-   ```bash
+```bash
 
-   curl -X GET "http://<external-ip>/getPromdetails"
+curl -X 'GET' \
+'http://a13fd2538294a414ba2a22974aa6466e-1509821416.ap-south-1.elb.amazonaws.com/deployments'
 
-   ```
-
-### Summary
-
-By following these steps, you've successfully:
-
-1\. Set up a Kubernetes configuration.
-
-2\. Prepared a FastAPI application.
-
-3\. Containerized the application.
-
-4\. Pushed the Docker image to a container registry.
-
-5\. Created and applied Kubernetes resources.
-
-6\. Verified the deployment and service.
-
-7\. Tested the FastAPI endpoints.
-
-This comprehensive guide ensures that your FastAPI application is running in a Kubernetes cluster, capable of creating deployments and fetching Prometheus details automatically.
+```
