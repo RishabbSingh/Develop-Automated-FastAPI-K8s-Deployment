@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fast-api-python
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: fastapi-python
+  template:
+    metadata:
+      labels:
+        app: fastapi-python
+    spec:
+      serviceAccountName: api-service-account
+      containers:
+      - name: fastapi-python
+        image: rishabsingh12/api-service:v4
+        ports:
+        - containerPort: 80
+      
+      
+
