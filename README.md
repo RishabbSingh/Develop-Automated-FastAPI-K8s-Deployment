@@ -346,7 +346,10 @@ curl -X 'GET' \
 
 ```
 <div align="center"> 
-  <img src="./assets/cover.png" alt="screenshot" />
+  <img src="./assets/1.png" alt="screenshot" />
+  <img src="./assets/2.png" alt="screenshot" />
+  <img src="./assets/3.png" alt="screenshot" />
+  <img src="./assets/4.png" alt="screenshot" />
 </div>
 
 
