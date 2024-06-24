@@ -335,11 +335,14 @@ curl -X 'GET' \
 #### 7. **Lets Check By executing**
 ```bash
 Create a deployement name github
+
 curl -X 'POST' \
 'http://a13fd2538294a414ba2a22974aa6466e-1509821416.ap-south-1.elb.amazonaws.com/createDeployment/github'
 
 Now, List the Deployment
-'http://a13fd2538294a414ba2a22974aa6466e-1509821416.ap-south-1.elb.amazonaws.com/deployments'
+
+curl -X 'GET' \
+  'http://a13fd2538294a414ba2a22974aa6466e-1509821416.ap-south-1.elb.amazonaws.com/deployments'
 
 ```
 <div align="center"> 
