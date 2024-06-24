@@ -207,145 +207,110 @@ roleRef:
 
 ```
 
-   Apply the file:
+   Apply the files:
 
-   ```bash
+```bash
 
    kubectl apply -f service-account.yaml
 
-   ```
+```
+```bash
+
+   kubectl apply -f api-deployment-manager-role.yaml
+
+```
+```bash
+
+   kubectl apply -f api-deployment-manager-rolebinding.yaml
+
+```
 
 2\. **Create Deployment and Service**
 
    Create a `deployment.yaml`:
 
-   ```yaml
+```bash
+ apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fast-api-python
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: fastapi-python
+  template:
+    metadata:
+      labels:
+        app: fastapi-python
+    spec:
+      serviceAccountName: api-service-account
+      containers:
+      - name: fastapi-python
+        image: rishabsingh12/api-service:v4
+        ports:
+        - containerPort: 80  
+```
+   
+Apply the file:
 
-   apiVersion: apps/v1
-
-   kind: Deployment
-
-   metadata:
-
-     name: fastapi-deployment
-
-   spec:
-
-     replicas: 1
-
-     selector:
-
-       matchLabels:
-
-         app: fastapi
-
-     template:
-
-       metadata:
-
-         labels:
-
-           app: fastapi
-
-       spec:
-
-         serviceAccountName: fastapi-sa
-
-         containers:
-
-         - name: fastapi
-
-           image: your-dockerhub-username/fast-api-image:latest
-
-           ports:
-
-           - containerPort: 80
-
-           volumeMounts:
-
-           - name: kubeconfig-volume
-
-             mountPath: /root/.kube
-
-         volumes:
-
-         - name: kubeconfig-volume
-
-           hostPath:
-
-             path: /home/ec2-user/.kube
-
-             type: Directory
-
-   ```
-
-   Apply the file:
-
-   ```bash
-
+```bash
    kubectl apply -f deployment.yaml
-
-   ```
+```
 
 3\. **Create a `service.yaml`:**
 
-   ```yaml
+```bash
+apiVersion: v1
+kind: Service
+metadata:
+  name: fastapi-service-python
+spec:
+  selector:
+    app: fastapi-python
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+  type: LoadBalancer
 
-   apiVersion: v1
+```
+Apply the file:
 
-   kind: Service
-
-   metadata:
-
-     name: fastapi-service
-
-   spec:
-
-     selector:
-
-       app: fastapi
-
-     ports:
-
-       - protocol: TCP
-
-         port: 80
-
-         targetPort: 80
-
-     type: LoadBalancer
-
-   ```
-
-   Apply the file:
-
-   ```bash
+```bash
 
    kubectl apply -f service.yaml
-
-   ```
+```
 
 #### 5. **Verify the Deployment and Service**
 
 1\. **Check the Pods**
 
-   ```bash
+```bash
 
    kubectl get pods
 
-   ```
+```
 
 2\. **Check the Service**
 
-   ```bash
+```bash
 
    kubectl get svc
 
-   ```
+```
 
 3\. **Get the External IP**
-
-   Note the external IP from the service output.
+   
+- Copy the external IP from the service output (fastapi-service-python).
+- Run this URL added /docs to access fastapi WEBUI a13fd2538294a414ba2a22974aa6466e-1509821416.ap-south-1.elb.amazonaws.com/docs 
+```bash
+NAME                    TYPE           CLUSTER-IP       EXTERNAL-IP                                                                 PORT(S)        AGE
+            
+fastapi-service-python   LoadBalancer   10.100.218.238   a13fd2538294a414ba2a22974aa6466e-1509821416.ap-south-1.elb.amazonaws.com   80:32060/TCP   2d8h
+kubernetes               ClusterIP      10.100.0.1       <none>                                                                     443/TCP        2d8h
+            
+```
 
 #### 6. **Test the FastAPI Endpoints**
 
