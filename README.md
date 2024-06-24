@@ -345,11 +345,42 @@ curl -X 'GET' \
   'http://a13fd2538294a414ba2a22974aa6466e-1509821416.ap-south-1.elb.amazonaws.com/deployments'
 
 ```
-<div align="center"> 
+
+
+
+
+1\. **As you can see we only have default deployment**
+
+<div align="left"> 
   <img src="./assets/1.png" alt="screenshot" />
+</div>
+
+
+
+
+2\. **Now we are creatin Deployment by the name `github`**
+
+<div align="center"> 
   <img src="./assets/2.png" alt="screenshot" />
+</div>
+
+
+
+3\. **Here we are getting the list of `Deployment`**
+
+<div align="center"> 
   <img src="./assets/3.png" alt="screenshot" />
+</div>
+
+
+
+4\. **By doing `kubectl get Deployment` you can also the list of Deployment**
+<div align="left"> 
   <img src="./assets/4.png" alt="screenshot" />
 </div>
 
 
+
+
+## Contact
+If you have any questions or suggestions, feel free to reach out to me at [main.rishab@gmail.com](main.rishab@gmail.com).
