@@ -144,101 +144,68 @@ CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "80"]
 
 2\. **Build the Docker Image**
 
-   ```bash
+```bash
 
-   docker build -t fast-api-image .
+docker build -t api-service .
 
-   ```
+```
 
 3\. **Tag the Docker Image**
 
-   ```bash
+```bash
 
-   docker tag fast-api-image your-dockerhub-username/fast-api-image:latest
+docker tag api-service rishabsingh12/api-service:v4
 
-   ```
+```
 
 4\. **Push the Docker Image**
 
-   ```bash
+```bash
 
-   docker push your-dockerhub-username/fast-api-image:latest
+docker push your-dockerhub-username/api-service:v4
 
-   ```
+```
 
 #### 4. **Setup Kubernetes Resources**
 
 1\. **Create a Service Account, Role, and Role Binding**
 
-   Create a YAML file `service-account.yaml`:
+     Create a Individual YAML file of `api-service-account.yaml`, `api-deployment-manager-role.yaml`, `api-deployment-manager-rolebinding.yaml`:
 
-   ```yaml
+```bash
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: api-service-account
+  namespace: default
+```
+```bash
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: default
+  name: api-eployment-manager
+rules:
+- apiGroups: ["apps"]
+  resources: ["deployments"]
+  verbs: ["create", "list"]
+```
+```bash
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: api-deployment-manager-rolebinding
+  namespace: default
+subjects:
+- kind: ServiceAccount
+  name: api-service-account
+  namespace: default
+roleRef:
+  kind: Role
+  name: api-eployment-manager
+  apiGroup: rbac.authorization.k8s.io
 
-   apiVersion: v1
-
-   kind: ServiceAccount
-
-   metadata:
-
-     name: fastapi-sa
-
-     namespace: default
-
-   ---
-
-   apiVersion: rbac.authorization.k8s.io/v1
-
-   kind: Role
-
-   metadata:
-
-     namespace: default
-
-     name: fastapi-role
-
-   rules:
-
-   - apiGroups: [""]
-
-     resources: ["pods"]
-
-     verbs: ["get", "list"]
-
-   - apiGroups: ["apps"]
-
-     resources: ["deployments"]
-
-     verbs: ["create", "get", "list"]
-
-   ---
-
-   apiVersion: rbac.authorization.k8s.io/v1
-
-   kind: RoleBinding
-
-   metadata:
-
-     name: fastapi-rolebinding
-
-     namespace: default
-
-   subjects:
-
-   - kind: ServiceAccount
-
-     name: fastapi-sa
-
-     namespace: default
-
-   roleRef:
-
-     kind: Role
-
-     name: fastapi-role
-
-     apiGroup: rbac.authorization.k8s.io
-
-   ```
+```
 
    Apply the file:
 
