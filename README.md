@@ -41,10 +41,65 @@ Create a FastAPI application with the necessary endpoints.
 1\. **Create `main.py`**
 
 ```bash
+from fastapi import FastAPI, HTTPException
+from kubernetes import client, config
 
+app = FastAPI()
+
+# Load the Kubernetes configuration
+config.load_incluster_config()
+
+# Kubernetes client setup
+api_instance = client.AppsV1Api()
+
+@app.post("/createDeployment/{name}")
+async def create_deployment(name: str):
+    try:
+        # Define the deployment
+        deployment = client.V1Deployment(
+            metadata=client.V1ObjectMeta(name=name),
+            spec=client.V1DeploymentSpec(
+                replicas=1,
+                selector=client.V1LabelSelector(
+                    match_labels={"app": name}
+                ),
+                template=client.V1PodTemplateSpec(
+                    metadata=client.V1ObjectMeta(labels={"app": name}),
+                    spec=client.V1PodSpec(
+                        containers=[client.V1Container(
+                            name="nginx",
+                            image="nginx:latest",
+                            ports=[client.V1ContainerPort(container_port=80)]
+                        )]
+                    )
+                )
+            )
+        )
+
+        # Create the deployment
+        api_instance.create_namespaced_deployment(
+            namespace="default",
+            body=deployment
+        )
+
+        return {"message": f"Deployment '{name}' created successfully."}
+
+    except client.exceptions.ApiException as e:
+        raise HTTPException(status_code=400, detail=f"Error creating deployment: {e}")
+
+@app.get("/deployments")
+async def get_deployments():
+    try:
+        # Get all deployments in the default namespace
+        deployments = api_instance.list_namespaced_deployment(namespace="default")
+
+        deployment_list = [deployment.metadata.name for deployment in deployments.items]
+        
+        return {"deployments": deployment_list}
+
+    except client.exceptions.ApiException as e:
+        raise HTTPException(status_code=400, detail=f"Error fetching deployments: {e}")
 ```
-
-
 
           
 2\. **Create `requirements.txt`**
@@ -68,33 +123,24 @@ Create a FastAPI application with the necessary endpoints.
 
 1\. **Create `Dockerfile`**
 
-   ```dockerfile
+ ```bash
+ # Use an official Python runtime as a parent image
+FROM python:3.9
 
-   # Use the tiangolo/uvicorn-gunicorn-fastapi image as the base image
+# Set the working directory in the container
+WORKDIR /app
 
-   FROM tiangolo/uvicorn-gunicorn-fastapi:python3.8
+# Install the dependencies
+RUN pip install --no-cache-dir fastapi uvicorn kubernetes
 
-   # Set the working directory
+# Copy the current directory contents into the container at /app
+COPY main.py main.py
 
-   WORKDIR /app
+# Run uvicorn with our FastAPI application
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "80"] 
 
-   # Copy the requirements file into the container
-
-   COPY ./requirements.txt /app/requirements.txt
-
-   # Install the dependencies
-
-   RUN pip install --no-cache-dir --upgrade -r /app/requirements.txt
-
-   # Copy the FastAPI application code into the container
-
-   COPY ./main.py /app/main.py
-
-   # Command to run the FastAPI application
-
-   CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "80"]
-
-   ```
+   
+```
 
 2\. **Build the Docker Image**
 
