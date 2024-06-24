@@ -40,125 +40,16 @@ Create a FastAPI application with the necessary endpoints.
 
 1\. **Create `main.py`**
 
-   ```python
+```bash
 
-   from fastapi import FastAPI, HTTPException
+```
 
-   from kubernetes import client, config
 
-   from pydantic import BaseModel
 
-   import requests
-
-   app = FastAPI()
-
-   # Load the in-cluster config
-
-   config.load_kube_config()
-
-   # Define a Pydantic model for the deployment name
-
-   class DeploymentName(BaseModel):
-
-       name: str
-
-   # Initialize the Kubernetes API client
-
-   k8s_client = client.AppsV1Api()
-
-   # Prometheus URL (replace with your actual Prometheus URL within the cluster)
-
-   PROMETHEUS_URL = "http://your-prometheus-url:9090"
-
-   @app.post("/createDeployment/{deployment_name}")
-
-   def create_deployment(deployment_name: str):
-
-       # Define the deployment spec
-
-       deployment_spec = {
-
-           "apiVersion": "apps/v1",
-
-           "kind": "Deployment",
-
-           "metadata": {"name": deployment_name},
-
-           "spec": {
-
-               "replicas": 1,
-
-               "selector": {"matchLabels": {"app": deployment_name}},
-
-               "template": {
-
-                   "metadata": {"labels": {"app": deployment_name}},
-
-                   "spec": {
-
-                       "containers": [
-
-                           {
-
-                               "name": deployment_name,
-
-                               "image": "nginx",  # Example image
-
-                               "ports": [{"containerPort": 80}],
-
-                           }
-
-                       ]
-
-                   },
-
-               },
-
-           },
-
-       }
-
-       try:
-
-           # Create the deployment
-
-           k8s_client.create_namespaced_deployment(
-
-               namespace="default", body=deployment_spec
-
-           )
-
-           return {"message": f"Deployment {deployment_name} created successfully"}
-
-       except client.exceptions.ApiException as e:
-
-           raise HTTPException(status_code=400, detail=str(e))
-
-   @app.get("/getPromdetails")
-
-   def get_prom_details():
-
-       try:
-
-           # Query Prometheus for running pods
-
-           query = 'up{job="kubernetes-pods"}'
-
-           response = requests.get(f"{PROMETHEUS_URL}/api/v1/query", params={"query": query})
-
-           response.raise_for_status()
-
-           return response.json()
-
-       except requests.exceptions.RequestException as e:
-
-           raise HTTPException(status_code=500, detail=str(e))
-
-   ```
-
+          
 2\. **Create `requirements.txt`**
 
-   ```text
+```bash
 
    fastapi
 
@@ -170,7 +61,8 @@ Create a FastAPI application with the necessary endpoints.
 
    requests
 
-   ```
+```
+
 
 #### 3. **Containerize the Application**
 
