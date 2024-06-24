@@ -1,4 +1,8 @@
 # Develop-Automated-FastAPI-K8s-Deployment
+ ### :camera: Screenshots
+ <div align="center"> 
+  <img src="./assets/cover.png" alt="screenshot" />
+</div>
 
 Below is a step-by-step documentation on how we have Develop and deployed the automatice K8s Deployment using FastAPI, including setting up a service account, defining roles, and creating a role binding for automatic deployment creation.
 
